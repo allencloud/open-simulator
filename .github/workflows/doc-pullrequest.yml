@@ -1,0 +1,34 @@
+name: doc-gen-submit-pr
+on:
+  push:
+    branches: "*"
+  pull_request:
+    branches: "*"
+    paths-ignore:
+      - 'docs/**'
+      - 'vendor/**'
+      - '*.md'
+      - '*.yml'
+
+jobs:
+  submit-doc-pull-request:
+    name: submit doc pull reuqest
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: '1.16.7'
+      id: go
+
+    - name: Check out code
+      uses: actions/checkout@v3
+
+    - name: gen and push back
+      run:  |
+        go build -o simon.out cmd/main.go
+        chmod +x simon.out
+        ./simon.out gen-doc
+        rm simon.out
+        git status
+        
